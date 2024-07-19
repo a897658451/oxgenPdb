@@ -16,7 +16,9 @@ namespace oxygenPdb{
 		size_t Count, 
 		const wchar_t* Format, ...);
 
-	const char* downUrl = "http://msdl.blackint3.com/download/symbols/";
+	const char* downUrl = "https://msdl.szdyg.cn/download/symbols/";
+	//http://msdl.szdyg.cn/download/symbols/
+	//http://msdl.blackint3.com/download/symbols/
 	struct PdbInfo
 	{
 		ULONG Signature;
@@ -58,11 +60,12 @@ namespace oxygenPdb{
 	//else download and then retrun file path
 	kstd::wstring PdbViewer::downLoadPdb(pdbInfo_t& info)
 	{
+		kstd::wstring emptyStr = L"";
 		wchar_t wPdbName[MAX_PATH]{ 0 };
-		auto wRetPdbName = ansiToUni(wPdbName, MAX_PATH, info.second.c_str());
+		auto wRetPdbName = ansiToUni(wPdbName, MAX_PATH, info.first.c_str());
 		//first check if the pdb has been downloaded over here
-		kstd::wstring _pdbPath = kstd::wstring(L"C:\\Windows\\Temp\\") + wRetPdbName;
-		kstd::string pdbPath = "C:\\Windows\\Temp\\" + info.second;
+		kstd::wstring _pdbPath = kstd::wstring(L"C:\\Windows\\PDB\\") + wRetPdbName;
+		kstd::string pdbPath = "C:\\Windows\\PDB\\" + info.first;
 		auto fileExits = isFileExits(pdbPath);
 		if (fileExits) {
 			//exits so we create file and get it's content
@@ -76,27 +79,28 @@ namespace oxygenPdb{
 
 		//must init else bsod
 		ksocket::init();
-		auto pdbSize=ksocket::getContentLength(url.c_str(), "88");
+		auto pdbSize=ksocket::getContentLength(url.c_str(), "80");
 		if (pdbSize == 0) {
 			printk("failed to get content length!\r\n");
-			return nullptr;
+			return emptyStr;
 		}
 
 		auto pdbBuf = kstd::make_unique<unsigned char[]>(pdbSize + 500);
-		auto bSuc=ksocket::getHttpContent(url.c_str(), (char*)pdbBuf.get(), pdbSize + 500, "88");
+		auto bSuc=ksocket::getHttpContent(url.c_str(), (char*)pdbBuf.get(), pdbSize + 500, "80");
+
 		if (!bSuc) {
 
 			printk("failed to get pdb file!\r\n");
-			return nullptr;
+			return emptyStr;
 		}
 		ksocket::destory();
 
 		//then we write to disk
 		if (wRetPdbName != wPdbName) {
 			printk("failed to convert ansi to uni!\r\n");
-			return nullptr;
+			return emptyStr;
 		}
-		helper::writeToDisk(L"C:\\Windows\\Temp\\", wRetPdbName,(char*)pdbBuf.get(), pdbSize);
+		helper::writeToDisk(L"C:\\Windows\\PDB\\", wRetPdbName,(char*)pdbBuf.get(), pdbSize);
 		
 		//not move semantics it's will auto
 		return _pdbPath;

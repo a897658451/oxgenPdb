@@ -35,6 +35,7 @@
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <DriverType>WDM</DriverType>
+    <Driver_SpectreMitigation>false</Driver_SpectreMitigation>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <TargetVersion>Windows10</TargetVersion>
@@ -42,6 +43,7 @@
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <DriverType>WDM</DriverType>
+    <Driver_SpectreMitigation>false</Driver_SpectreMitigation>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'" Label="Configuration">
     <TargetVersion>Windows10</TargetVersion>
@@ -67,15 +69,17 @@
   <PropertyGroup />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
-    <OutDir>$(ProjectDir)bin\$(ConfigurationName)\</OutDir>
+    <OutDir>E:\vtCode\winDbg\extern\bin</OutDir>
     <IntDir>$(ProjectDir)obj\$(ConfigurationName)\</IntDir>
     <IncludePath>$(VC_IncludePath);$(projectDir)include\;$(CRT_IncludePath);$(IncludePath)</IncludePath>
+    <TargetName>LyPdb</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
-    <OutDir>$(ProjectDir)bin\$(ConfigurationName)\</OutDir>
+    <OutDir>E:\vtCode\winDbg\extern\bin</OutDir>
     <IntDir>$(ProjectDir)obj\$(ConfigurationName)\</IntDir>
     <IncludePath>$(VC_IncludePath);$(projectDir)include\;$(CRT_IncludePath);$(IncludePath)</IncludePath>
+    <TargetName>LyPdb</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>

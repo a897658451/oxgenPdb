@@ -104,7 +104,11 @@ namespace ksocket {
 		char* p2;
 	};
 
+#if DBG
 #define printk(...)do{DbgPrintEx(77,0,__VA_ARGS__);}while(0);
+#else
+#define printk(...)do{}while(0);
+#endif
 
 	
 	static bool createGetRequest(const char* hostname, const char* path, __inout char* request) {
@@ -222,6 +226,7 @@ namespace ksocket {
 
 	size_t getContentLength(const char* url,const char* port)
 	{
+
 		auto [hostname, path] = getHostAndPath(url);
 		int result;
 		if (!hostname || !path) return 0;
@@ -244,15 +249,16 @@ namespace ksocket {
 		char recv_buffer[1024] = { 0 };
 
 		struct addrinfo hints = { 0 };
-		hints.ai_flags |= AI_CANONNAME;
-		hints.ai_family = AF_UNSPEC;
+		//hints.ai_flags |= AI_CANONNAME;
+		//hints.ai_family = AF_UNSPEC;
+		hints.ai_family = AF_INET;
 		hints.ai_socktype = SOCK_STREAM;//TCP
 
 		//就是获取这个url的信息的
 		struct addrinfo* res;
 		result = getaddrinfo(hostname, port, &hints, &res);
 		if (!NT_SUCCESS(result)) {
-
+			freeaddrinfo(res);
 			printk("failed to get addr info\r\n");
 			return 0;
 		}
@@ -262,9 +268,8 @@ namespace ksocket {
 		result = send(sockfd, request, strlen(request) + 1, 0);
 		result = recv(sockfd, recv_buffer, sizeof(recv_buffer), 0);
 		recv_buffer[sizeof(recv_buffer) - 1] = '\0';
-
 		//查找
-
+		freeaddrinfo(res);
 		char* findStr=strstr(recv_buffer, "Content-Length:");
 		if (findStr == nullptr) {
 			ExFreePool(hostname);
@@ -287,7 +292,7 @@ namespace ksocket {
 	{
 		int result;
 		auto [hostname, path] = getHostAndPath(url);
-
+		
 		if (!hostname || !path) return false;
 
 		//然后创建一个http get请求
